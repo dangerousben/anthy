@@ -667,8 +667,7 @@
 (defun anthy-insert (&optional arg)
   "Anthyのキーハンドラ"
   (interactive "*p")
-  ;; suzuki : last-command-char を (anthy-last-command-char) に変更
-  (let* ((ch (anthy-last-command-char))
+  (let* ((ch last-command-event)
 	 (chenc (anthy-encode-key ch)))
     (anthy-handle-key ch chenc)))
 
@@ -877,22 +876,6 @@
   (inactivate-input-method)
   (when (<= (minibuffer-depth) 1)
     (remove-hook 'minibuffer-exit-hook 'anthy-leim-exit-from-minibuffer)))
-
-;;
-;; Emacs / XEmacs コンパチブルな last-command-char
-;; suzuki : 新設
-;;
-(defun anthy-last-command-char ()
-  "最後の入力イベントを返す。XEmacs では int に変換する"
-  (if anthy-xemacs
-      (let ((event last-command-event))
-	(cond
-	 ((event-matches-key-specifier-p event 'left)      2)
-	 ((event-matches-key-specifier-p event 'right)     6)
-	 ((event-matches-key-specifier-p event 'backspace) 8)
-	 (t
-	  (char-to-int (event-to-character event)))))
-    last-command-char))
 
 ;;
 ;;
